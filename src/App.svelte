@@ -1,25 +1,29 @@
 <script lang="ts">
+  import MintForm from "./lib/MintForm.svelte";
+
+  import TokenInfo from "./lib/TokenInfo.svelte";
+  import UserGreeting from "./lib/UserGreeting.svelte";
   import connectStore from "./stores/connectStore";
   import walletStore from "./stores/walletStore";
 </script>
 
 <main>
-  <h1>svarknet</h1>
+  <p>svarknet</p>
 
   {#if $connectStore.loading}
-    Connecting...
+    Connecting wallet...
+  {:else if !$connectStore.connected}
+    <button type="buton" on:click={() => connectStore.connect()}>
+      Connect
+    </button>
   {/if}
 
-  {#if $walletStore.userAddress}
-    <h1>Hello there, {$walletStore.userAddress.substring(0, 10)}</h1>
-  {:else}
-    <button type="buton" on:click={() => connectStore.connect()}>Connect</button
-    >
+  {#if $connectStore.connected}
+    <UserGreeting />
+    <MintForm />
+
+    <TokenInfo />
   {/if}
-
-  balance: {$walletStore.balance}
-
-  <button on:click={walletStore.mint}>Mint</button>
 </main>
 
 <style>

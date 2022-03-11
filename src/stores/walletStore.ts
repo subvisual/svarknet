@@ -13,8 +13,8 @@ const createWalletStore = () => {
 
   const store = writable({
     userAddress: "",
-    balance: "0",
-    contractAddress: CONTRACT_ADDRESS
+    balance: null,
+    contractAddress: CONTRACT_ADDRESS,
   });
 
   function initialiseWallet(userAddress: string) {
@@ -35,9 +35,11 @@ const createWalletStore = () => {
       calldata: [hexToDecimalString(userAddress)],
     });
 
+    let val = formatEther(hexToDecimalString(balanceOf.result[0]));
+
     store.update((store) => ({
       ...store,
-      balance: formatEther(hexToDecimalString(balanceOf.result[0])),
+      balance: Math.round(Number(val)),
     }));
   }
 
@@ -51,10 +53,23 @@ const createWalletStore = () => {
     );
   }
 
+  async function watchToken() {
+    starknet.request({
+      type: "wallet_watchAsset",
+      params: {
+        type: "ERC20",
+        options: {
+          address: get(store).contractAddress,
+        },
+      },
+    });
+  }
+
   return {
     subscribe: store.subscribe,
     initialiseWallet,
     mint,
+    watchToken
   };
 };
 

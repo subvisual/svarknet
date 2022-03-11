@@ -5,6 +5,7 @@ import walletStore from "./walletStore";
 function createConnectStore() {
   const { update, subscribe } = writable({
     loading: true,
+    connected: false,
   });
 
   const starknet = getStarknet();
@@ -22,6 +23,7 @@ function createConnectStore() {
 
     if (starknet.isConnected) {
       walletStore.initialiseWallet(userWalletContractAddress);
+      update((store) => ({ ...store, connected: true }));
     }
 
     setLoading(false);
