@@ -30,8 +30,14 @@ function createConnectStore() {
     setLoading(false);
   }
 
+  function handleAccountChange() {
+    window.location.reload();     
+  }
+
   async function init() {
     try {
+      starknet.on("accountsChanged", handleAccountChange);
+
       let preAuth = await starknet.isPreauthorized();
 
       if (preAuth) {

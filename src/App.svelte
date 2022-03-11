@@ -1,9 +1,10 @@
 <script lang="ts">
   import ConnectWallet from "./lib/ConnectWallet.svelte";
-import MintForm from "./lib/MintForm.svelte";
+  import MintForm from "./lib/MintForm.svelte";
 
   import TokenInfo from "./lib/TokenInfo.svelte";
-import TransferForm from "./lib/TransferForm.svelte";
+  import TransactionLog from "./lib/TransactionLog.svelte";
+  import TransferForm from "./lib/TransferForm.svelte";
   import UserGreeting from "./lib/UserGreeting.svelte";
   import connectStore from "./stores/connectStore";
   import walletStore from "./stores/walletStore";
@@ -11,16 +12,16 @@ import TransferForm from "./lib/TransferForm.svelte";
 
 <main class="flex flex-col h-full py-10 px-20 bg-gray-800 text-gray-100">
   <div class="flex-1">
-  
+    {#if $connectStore.connected}
+      <UserGreeting />
+      <MintForm />
+      <TransferForm />
+      <TransactionLog />
 
-  {#if $connectStore.connected}
-    <UserGreeting />
-    <MintForm />
-    <TransferForm />
-    <TokenInfo />
-  {:else}
-    <ConnectWallet />
-  {/if}
+      <TokenInfo />
+    {:else}
+      <ConnectWallet />
+    {/if}
   </div>
   <div>
     <p>svarknet</p>

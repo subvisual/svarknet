@@ -11,7 +11,7 @@
 </script>
 
 <form on:submit={handleSubmit} class="mb-6">
-  <h2 class="text-lg mb-2">Transfer tokens to another address</h2>
+  <h2 class="text-lg mb-2">Mint tokens</h2>
   <input
     type="number"
     required

@@ -1,10 +1,9 @@
 import { getStarknet } from "@argent/get-starknet/dist";
 import { formatEther, parseUnits } from "@ethersproject/units";
-import { Abi, Contract, Signer, stark } from "starknet";
+import type { AddTransactionResponse } from "starknet";
 import { hexToDecimalString } from "starknet/dist/utils/number";
 import { getSelectorFromName } from "starknet/dist/utils/stark";
 import { get, writable } from "svelte/store";
-import ERC20 from "../data/ERC20.json";
 
 const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS as string;
 
@@ -15,6 +14,7 @@ const createWalletStore = () => {
     userAddress: "",
     balance: null,
     contractAddress: CONTRACT_ADDRESS,
+    transactions: [],
   });
 
   function initialiseWallet(userAddress: string) {
@@ -43,10 +43,41 @@ const createWalletStore = () => {
     }));
   }
 
+  async function waitForTx(tx: AddTransactionResponse) {
+    store.update((store) => ({
+      ...store,
+      transactions: [
+        ...store.transactions,
+        {
+          status: "pending",
+          tx,
+        },
+      ],
+    }));
+
+    await starknet.provider.waitForTx(tx.transaction_hash);
+
+    store.update((store) => ({
+      ...store,
+      transactions: [
+        ...store.transactions.map((t) =>
+          t.tx.transaction_hash === tx.transaction_hash
+            ? {
+                status: "done",
+                tx,
+              }
+            : tx
+        ),
+      ],
+    }));
+
+    getBalance();
+  }
+
   async function mint(amount: number) {
     let { userAddress } = get(store);
 
-     await starknet.signer.invokeFunction(
+    let tx = await starknet.signer.invokeFunction(
       CONTRACT_ADDRESS,
       getSelectorFromName("mint"),
       [
@@ -54,11 +85,13 @@ const createWalletStore = () => {
         parseUnits(amount.toString(), 18).toString(),
         "0",
       ]
-    ); 
+    );
+
+    waitForTx(tx);
   }
 
   async function transfer(to: string, amount: number) {
-    let op = await starknet.signer.invokeFunction(
+    let tx = await starknet.signer.invokeFunction(
       CONTRACT_ADDRESS,
       getSelectorFromName("transfer"),
       [
@@ -68,9 +101,7 @@ const createWalletStore = () => {
       ]
     );
 
-    starknet.provider.waitForTx;
-
-    console.log(op);
+    waitForTx(tx);
   }
 
   async function watchToken() {
