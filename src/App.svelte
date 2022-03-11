@@ -7,14 +7,19 @@
   <h1>svarknet</h1>
 
   {#if $connectStore.loading}
-    Loading...
+    Connecting...
   {/if}
 
   {#if $walletStore.userAddress}
     <h1>Hello there, {$walletStore.userAddress.substring(0, 10)}</h1>
   {:else}
-    <button type="buton" on:click={connectStore.connect}>Connect</button>
+    <button type="buton" on:click={() => connectStore.connect()}>Connect</button
+    >
   {/if}
+
+  balance: {$walletStore.balance}
+
+  <button on:click={walletStore.mint}>Mint</button>
 </main>
 
 <style>

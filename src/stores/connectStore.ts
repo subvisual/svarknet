@@ -4,7 +4,7 @@ import walletStore from "./walletStore";
 
 function createConnectStore() {
   const { update, subscribe } = writable({
-    loading: false,
+    loading: true,
   });
 
   const starknet = getStarknet();
@@ -13,26 +13,39 @@ function createConnectStore() {
     update((store) => ({ ...store, loading }));
   }
 
-  async function connect() {
+  async function connect(showModal = true) {
     setLoading(true);
 
     const [userWalletContractAddress] = await starknet.enable({
-      showModal: true,
+      showModal,
     });
 
     if (starknet.isConnected) {
-      walletStore.setUserAddress(userWalletContractAddress);
+      walletStore.initialiseWallet(userWalletContractAddress);
     }
 
     setLoading(false);
   }
 
+  async function init() {
+    let preAuth = await starknet.isPreauthorized();
+
+    if (preAuth) {
+      connect(false);
+    } else {
+      setLoading(false);
+    }
+  }
+
   return {
     subscribe,
     connect,
+    init,
   };
 }
 
 const connectStore = createConnectStore();
+
+connectStore.init();
 
 export default connectStore;
