@@ -16,7 +16,6 @@
       <MintForm />
       <TransferForm />
       <TransactionLog />
-
       <TokenInfo />
     {:else}
       <ConnectWallet />

@@ -1,11 +1,25 @@
 import { getStarknet } from "@argent/get-starknet/dist";
 import { formatEther, parseUnits } from "@ethersproject/units";
-import type { AddTransactionResponse } from "starknet";
+import {
+  Abi,
+  AddTransactionResponse,
+  Contract,
+  number,
+  uint256,
+} from "starknet";
 import { hexToDecimalString } from "starknet/dist/utils/number";
-import { getSelectorFromName } from "starknet/dist/utils/stark";
 import { get, writable } from "svelte/store";
+import ERC20 from "../data/ERC20.json";
 
 const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS as string;
+
+function getUint256CalldataFromBN(bn: number.BigNumberish) {
+  return { type: "struct" as const, ...uint256.bnToUint256(bn) };
+}
+
+function parseInputAmountToUint256(input: string, decimals: number = 18) {
+  return getUint256CalldataFromBN(parseUnits(input, decimals).toString());
+}
 
 const createWalletStore = () => {
   const starknet = getStarknet();
@@ -15,27 +29,33 @@ const createWalletStore = () => {
     balance: null,
     contractAddress: CONTRACT_ADDRESS,
     transactions: [],
+    contract: null as Contract,
   });
 
   function initialiseWallet(userAddress: string) {
+    const contract = new Contract(
+      ERC20 as Abi,
+      CONTRACT_ADDRESS,
+      starknet.account
+    );
+
     store.update((store) => ({
       ...store,
       userAddress,
+      contract,
     }));
 
     getBalance();
   }
 
   async function getBalance() {
-    let { userAddress } = get(store);
+    let { userAddress, contract } = get(store);
 
-    const balanceOf = await starknet.provider.callContract({
-      contract_address: CONTRACT_ADDRESS,
-      entry_point_selector: getSelectorFromName("balanceOf"),
-      calldata: [hexToDecimalString(userAddress)],
-    });
+    let op = await contract.balanceOf(userAddress);
 
-    let val = formatEther(hexToDecimalString(balanceOf.result[0]));
+    let val = formatEther(
+      hexToDecimalString(getUint256CalldataFromBN(op.balance.low).low)
+    );
 
     store.update((store) => ({
       ...store,
@@ -55,7 +75,7 @@ const createWalletStore = () => {
       ],
     }));
 
-    await starknet.provider.waitForTx(tx.transaction_hash);
+    await starknet.provider.waitForTransaction(tx.transaction_hash);
 
     store.update((store) => ({
       ...store,
@@ -75,33 +95,25 @@ const createWalletStore = () => {
   }
 
   async function mint(amount: number) {
-    let { userAddress } = get(store);
+    let { userAddress, contract } = get(store);
 
-    let tx = await starknet.signer.invokeFunction(
-      CONTRACT_ADDRESS,
-      getSelectorFromName("mint"),
-      [
-        hexToDecimalString(userAddress),
-        parseUnits(amount.toString(), 18).toString(),
-        "0",
-      ]
-    );
+    let mint = await contract.mint(userAddress, [
+      parseUnits(amount.toString(), 18).toString(),
+      "0",
+    ]);
 
-    waitForTx(tx);
+    waitForTx(mint);
   }
 
   async function transfer(to: string, amount: number) {
-    let tx = await starknet.signer.invokeFunction(
-      CONTRACT_ADDRESS,
-      getSelectorFromName("transfer"),
-      [
-        hexToDecimalString(to),
-        parseUnits(amount.toString(), 18).toString(),
-        "0",
-      ]
-    );
+    let { contract } = get(store);
 
-    waitForTx(tx);
+    let transfer = await contract.transfer(to, [
+      parseUnits(amount.toString(), 18).toString(),
+      "0",
+    ]);
+
+    waitForTx(transfer);
   }
 
   async function watchToken() {
