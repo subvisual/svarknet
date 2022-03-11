@@ -6,6 +6,7 @@ function createConnectStore() {
   const { update, subscribe } = writable({
     loading: true,
     connected: false,
+    noExtension: false,
   });
 
   const starknet = getStarknet();
@@ -30,11 +31,18 @@ function createConnectStore() {
   }
 
   async function init() {
-    let preAuth = await starknet.isPreauthorized();
+    try {
+      let preAuth = await starknet.isPreauthorized();
 
-    if (preAuth) {
-      connect(false);
-    } else {
+      if (preAuth) {
+        connect(false);
+      } else {
+        setLoading(false);
+      }
+    } catch (err) {
+      console.error(err);
+      update((store) => ({ ...store, noExtension: true }));
+
       setLoading(false);
     }
   }

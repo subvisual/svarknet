@@ -4,7 +4,7 @@ import { Abi, Contract, Signer, stark } from "starknet";
 import { hexToDecimalString } from "starknet/dist/utils/number";
 import { getSelectorFromName } from "starknet/dist/utils/stark";
 import { get, writable } from "svelte/store";
-import ERC721 from "../data/ERC721.json";
+import ERC20 from "../data/ERC20.json";
 
 const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS as string;
 
@@ -37,7 +37,6 @@ const createWalletStore = () => {
 
     let val = formatEther(hexToDecimalString(balanceOf.result[0]));
 
-    
     store.update((store) => ({
       ...store,
       balance: Math.round(Number(val)),
@@ -47,7 +46,7 @@ const createWalletStore = () => {
   async function mint(amount: number) {
     let { userAddress } = get(store);
 
-    let mint = await starknet.signer.invokeFunction(
+    await starknet.signer.invokeFunction(
       CONTRACT_ADDRESS,
       getSelectorFromName("mint"),
       [
@@ -56,6 +55,22 @@ const createWalletStore = () => {
         "0",
       ]
     );
+  }
+
+  async function transfer(to: string, amount: number) {
+    let op = await starknet.signer.invokeFunction(
+      CONTRACT_ADDRESS,
+      getSelectorFromName("transfer"),
+      [
+        hexToDecimalString(to),
+        parseUnits(amount.toString(), 18).toString(),
+        "0",
+      ]
+    );
+
+    starknet.provider.waitForTx;
+
+    console.log(op);
   }
 
   async function watchToken() {
@@ -74,6 +89,7 @@ const createWalletStore = () => {
     subscribe: store.subscribe,
     initialiseWallet,
     mint,
+    transfer,
     watchToken,
   };
 };

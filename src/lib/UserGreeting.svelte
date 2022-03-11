@@ -7,7 +7,7 @@
 <div class="my-16">
   <h1 class="text-xl">Hello there, {address}</h1>
 
-  {#if $walletStore.balance}
+  {#if $walletStore.balance !== null}
     <p>Balance: <strong>{$walletStore.balance} tokens</strong></p>
   {/if}
 </div>

@@ -3,6 +3,7 @@
 import MintForm from "./lib/MintForm.svelte";
 
   import TokenInfo from "./lib/TokenInfo.svelte";
+import TransferForm from "./lib/TransferForm.svelte";
   import UserGreeting from "./lib/UserGreeting.svelte";
   import connectStore from "./stores/connectStore";
   import walletStore from "./stores/walletStore";
@@ -15,7 +16,7 @@ import MintForm from "./lib/MintForm.svelte";
   {#if $connectStore.connected}
     <UserGreeting />
     <MintForm />
-
+    <TransferForm />
     <TokenInfo />
   {:else}
     <ConnectWallet />

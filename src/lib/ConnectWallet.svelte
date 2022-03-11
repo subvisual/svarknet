@@ -4,7 +4,9 @@
 
 <div class="flex h-full text-center">
   <div class="m-auto pb-20">
-    {#if $connectStore.loading}
+    {#if $connectStore.noExtension} 
+      <p>You need the Argent X StarkNet Wallet extension to connect</p>
+    {:else if $connectStore.loading}
       <p>Connecting wallet...</p>
     {:else if !$connectStore.connected}
       <button
