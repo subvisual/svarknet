@@ -2,8 +2,10 @@
   import walletStore from "../stores/walletStore";
 </script>
 
-<div>
+<div class="mt-20">
   <p>ERC-20 token address:</p>
-  <pre>{$walletStore.contractAddress}</pre>
-  <button on:click={walletStore.watchToken}>Add this to your wallet</button>
+  <pre>{$walletStore.contractAddress.substring(0, 20)}...</pre>
+  <button on:click={walletStore.watchToken} class="underline mt-1"
+    >Add this to your wallet</button
+  >
 </div>

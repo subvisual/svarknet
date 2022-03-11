@@ -37,19 +37,24 @@ const createWalletStore = () => {
 
     let val = formatEther(hexToDecimalString(balanceOf.result[0]));
 
+    
     store.update((store) => ({
       ...store,
       balance: Math.round(Number(val)),
     }));
   }
 
-  async function mint() {
+  async function mint(amount: number) {
     let { userAddress } = get(store);
 
     let mint = await starknet.signer.invokeFunction(
       CONTRACT_ADDRESS,
       getSelectorFromName("mint"),
-      [hexToDecimalString(userAddress), parseUnits("1", 18).toString(), "0"]
+      [
+        hexToDecimalString(userAddress),
+        parseUnits(amount.toString(), 18).toString(),
+        "0",
+      ]
     );
   }
 
@@ -69,7 +74,7 @@ const createWalletStore = () => {
     subscribe: store.subscribe,
     initialiseWallet,
     mint,
-    watchToken
+    watchToken,
   };
 };
 

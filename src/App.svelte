@@ -1,5 +1,6 @@
 <script lang="ts">
-  import MintForm from "./lib/MintForm.svelte";
+  import ConnectWallet from "./lib/ConnectWallet.svelte";
+import MintForm from "./lib/MintForm.svelte";
 
   import TokenInfo from "./lib/TokenInfo.svelte";
   import UserGreeting from "./lib/UserGreeting.svelte";
@@ -7,28 +8,26 @@
   import walletStore from "./stores/walletStore";
 </script>
 
-<main>
-  <p>svarknet</p>
-
-  {#if $connectStore.loading}
-    Connecting wallet...
-  {:else if !$connectStore.connected}
-    <button type="buton" on:click={() => connectStore.connect()}>
-      Connect
-    </button>
-  {/if}
+<main class="flex flex-col h-full py-10 px-20 bg-gray-800 text-gray-100">
+  <div class="flex-1">
+  
 
   {#if $connectStore.connected}
     <UserGreeting />
     <MintForm />
 
     <TokenInfo />
+  {:else}
+    <ConnectWallet />
   {/if}
+  </div>
+  <div>
+    <p>svarknet</p>
+  </div>
 </main>
 
-<style>
-  :root {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-      Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  }
+<style lang="postcss" global>
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
 </style>
