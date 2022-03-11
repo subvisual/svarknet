@@ -46,7 +46,7 @@ const createWalletStore = () => {
   async function mint(amount: number) {
     let { userAddress } = get(store);
 
-    await starknet.signer.invokeFunction(
+     await starknet.signer.invokeFunction(
       CONTRACT_ADDRESS,
       getSelectorFromName("mint"),
       [
@@ -54,7 +54,7 @@ const createWalletStore = () => {
         parseUnits(amount.toString(), 18).toString(),
         "0",
       ]
-    );
+    ); 
   }
 
   async function transfer(to: string, amount: number) {
