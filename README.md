@@ -1,4 +1,6 @@
-# Svarknet
+# Svarknet dapp
+
+Deployed at [scaling-tribble.vercel.app](https://scaling-tribble.vercel.app/)
 
 # Svelte + TS + Vite
 
