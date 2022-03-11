@@ -1,6 +1,8 @@
-# Svarknet dapp
+# Starknet starter dapp
 
-Deployed at [scaling-tribble.vercel.app](https://scaling-tribble.vercel.app/)
+Deployed at [svarknet.vercel.app](https://svarknet.vercel.app/).
+Uses [this ERC20 contract](https://goerli.voyager.online/contract/0x07394cbe418daa16e42b87ba67372d4ab4a5df0b05c6e554d158458ce245bc10).
+
 
 # Svelte + TS + Vite
 
