@@ -25,19 +25,19 @@ function createConnectStore() {
     if (starknet.isConnected) {
       walletStore.initialiseWallet(userWalletContractAddress);
       update((store) => ({ ...store, connected: true }));
+
+      starknet.on("accountsChanged", handleAccountChange);
     }
 
     setLoading(false);
   }
 
   function handleAccountChange() {
-    window.location.reload();     
+    window.location.reload();
   }
 
   async function init() {
     try {
-      starknet.on("accountsChanged", handleAccountChange);
-
       let preAuth = await starknet.isPreauthorized();
 
       if (preAuth) {
