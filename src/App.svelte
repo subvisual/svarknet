@@ -1,7 +1,6 @@
 <script lang="ts">
   import ConnectWallet from "./lib/ConnectWallet.svelte";
   import MintForm from "./lib/MintForm.svelte";
-
   import TokenInfo from "./lib/TokenInfo.svelte";
   import TransactionLog from "./lib/TransactionLog.svelte";
   import TransferForm from "./lib/TransferForm.svelte";
@@ -24,7 +23,7 @@
     {/if}
   </div>
   <div>
-    <p>svarknet</p>
+    <p>starknet + vite + svelte</p>
   </div>
 </main>
 
