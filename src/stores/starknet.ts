@@ -1,6 +1,6 @@
 import type { IStarknetWindowObject } from "get-starknet";
 import { connect } from "get-starknet";
-import { get, writable } from "svelte/store";
+import { writable } from "svelte/store";
 import _baseStore from "./_baseStore";
 
 const store = writable<IStarknetWindowObject>();
@@ -18,8 +18,7 @@ const starknetStore = _baseStore(
       if (!data) {
         return false;
       }
-      console.log(`has data: ${!!data}`)
-      console.log("attach listener")
+
       data?.on("accountsChanged", handleAccountsChange);
 
       return true;

@@ -1,13 +1,27 @@
 <script lang="ts">
+  import { get } from "svelte/store";
+  import { contracts } from "../stores/contract";
+  import transaction from "../stores/transaction";
+  import account from "../stores/account";
   import walletStore from "../stores/walletStore";
+  import { parseInputAmountToUint256 } from "../utils/parseInputAmountToUint256";
 
   let destinationAddress = "";
   let amount = 1;
 
+  const erc20Contract = $contracts?.["erc20"];
+
+  const transfer = transaction();
+
   function handleSubmit(event: SubmitEvent) {
     event.preventDefault();
-
-    walletStore.transfer(destinationAddress, amount);
+    
+    transfer.wait(() =>
+      $erc20Contract.mint(
+        $account.address,
+        parseInputAmountToUint256(amount.toString())
+      )
+    );
   }
 </script>
 
