@@ -1,17 +1,15 @@
 <script>
-  import connectStore from "../stores/connectStore";
+  import connect from "../stores/connect";
 </script>
 
 <div class="flex h-full text-center">
   <div class="m-auto pb-20">
-    {#if $connectStore.noExtension} 
-      <p>You need the Argent X StarkNet Wallet extension to connect</p>
-    {:else if $connectStore.loading}
+    {#if $connect.loading}
       <p>Connecting wallet...</p>
-    {:else if !$connectStore.connected}
+    {:else if !$connect.success}
       <button
         type="button"
-        on:click={() => connectStore.connect()}
+        on:click={() => connect.connectWallet()}
         class="bg-blue-500 text-gray-100 py-3 px-6 rounded"
       >
         Connect wallet

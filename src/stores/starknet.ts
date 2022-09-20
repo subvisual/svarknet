@@ -1,6 +1,6 @@
 import type { IStarknetWindowObject } from "get-starknet";
 import { connect } from "get-starknet";
-import { writable } from "svelte/store";
+import { get, writable } from "svelte/store";
 import _baseStore from "./_baseStore";
 
 const store = writable<IStarknetWindowObject>();
@@ -15,8 +15,11 @@ const starknetStore = _baseStore(
     }
 
     _subscribeOnce((data) => {
-      if (!data) return false;
-
+      if (!data) {
+        return false;
+      }
+      console.log(`has data: ${!!data}`)
+      console.log("attach listener")
       data?.on("accountsChanged", handleAccountsChange);
 
       return true;
@@ -30,21 +33,3 @@ const starknetStore = _baseStore(
 );
 
 export default starknetStore;
-
-/* let eventsAdded = false;
-
-async function handleAccountsChange() {
-  const st = await connect({ showList: false });
-
-  starknetStore.set(st);
-}
-
-starknetStore.subscribe((store) => {
-  if (!store || eventsAdded) return;
-
-  store.on("accountsChanged", handleAccountsChange);
-
-  eventsAdded = true;
-});
-
-export default starknetStore; */

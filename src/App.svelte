@@ -1,24 +1,21 @@
 <script lang="ts">
   import connect from "./stores/connect";
-  import account from "./stores/account";
+  import UserGreeting from "./lib/UserGreeting.svelte";
+  import MintForm from "./lib/MintForm.svelte";
+  import ConnectWallet from "./lib/ConnectWallet.svelte";
 </script>
 
 <main class="flex flex-col h-full py-10 px-20 bg-gray-800 text-gray-100">
   <div class="flex-1">
-    <button on:click={() => connect.connectWallet()}>
-      connect {$connect.loading ? "loading..." : ""}
-    </button>
     {#if $connect.success}
-      <p>done!</p>
-    {/if}
-
-    {#if $account.address}
-      <p>{$account.address}</p>
+      <UserGreeting />
+      <MintForm />  
+    {:else}
+      <ConnectWallet />
     {/if}
 
     <!-- {#if $connectStore.connected}
       <UserGreeting />
-      <MintForm />
       <TransferForm />
       <TransactionLog />
       <TokenInfo />

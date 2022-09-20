@@ -17,7 +17,7 @@ const store = writable<ConnectStore>({
   error: false,
 });
 
-const connect = _baseStore(store, ({ subscribe, _set }) => {
+const connect = _baseStore(store, ({ subscribe, _set }) => {  
   async function connectWallet() {
     _set({
       loading: true,
@@ -53,4 +53,3 @@ const connect = _baseStore(store, ({ subscribe, _set }) => {
 });
 
 export default connect;
-
