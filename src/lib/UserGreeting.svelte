@@ -1,13 +1,24 @@
 <script lang="ts">
-  import walletStore from "../stores/walletStore";
+  import accountStore from "src/starknet-stores/accountStore";
+  import balance from "src/starknet-stores/balance";
+  import contractsStore from "src/starknet-stores/contractsStore";
+  import truncateAddress from "src/utils/truncateAddress";
 
-  let address = $walletStore.userAddress.substring(0, 10);
+  $: address = truncateAddress($accountStore.address);
+
+  let bal = balance({
+    contract: $contractsStore.testERC20,
+    name: "testERC20",
+  });
 </script>
 
 <div class="my-10">
   <h1 class="text-3xl">Hello there, {address}</h1>
 
-  {#if $walletStore.balance !== null}
-    <p>Balance: <strong>{$walletStore.balance} tokens</strong></p>
+  {#if $bal.loading}
+    <p>Loading balance...</p>
+  {/if}
+  {#if $bal.success}
+    ERC20 Balance: {$bal.balance}
   {/if}
 </div>

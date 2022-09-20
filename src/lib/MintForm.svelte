@@ -1,12 +1,27 @@
 <script lang="ts">
-  import walletStore from "../stores/walletStore";
+  import account from "src/starknet-stores/accountStore";
+  import transactionStore from "src/starknet-stores/transactionStore";
+  import contractsStore from "src/starknet-stores/contractsStore";
+  import { parseInputAmountToUint256 } from "src/utils/parseInputAmountToUint256";
+  import TransactionStatus from "./TransactionStatus.svelte";
+  import balancesStore from "src/starknet-stores/balancesStore";
 
   let amount = 1;
 
-  function handleSubmit(event: SubmitEvent) {
+  const tx = transactionStore();
+  const contract = $contractsStore.testERC20;
+
+  async function handleSubmit(event: SubmitEvent) {
     event.preventDefault();
 
-    walletStore.mint(amount);
+    await tx.waitFor(() =>
+      $contract.mint(
+        $account.address,
+        parseInputAmountToUint256(amount.toString())
+      )
+    );
+
+    $balancesStore.testERC20.getBalance();
   }
 </script>
 
@@ -20,7 +35,10 @@
     bind:value={amount}
     class="block py-1 px-2 mr-3 rounded-sm w-20 text-gray-900"
   />
-  <button type="submit" class="mt-4 bg-blue-500 text-gray-100 py-1 px-4 rounded-sm"
-    >Mint</button
+  <button
+    type="submit"
+    class="mt-4 bg-blue-500 text-gray-100 py-1 px-4 rounded-sm">Mint</button
   >
+  <TransactionStatus transaction={tx} />
 </form>
+<hr class="mb-4" />

@@ -1,30 +1,39 @@
 <script lang="ts">
-  import ConnectWallet from "./lib/ConnectWallet.svelte";
-  import MintForm from "./lib/MintForm.svelte";
-  import TokenInfo from "./lib/TokenInfo.svelte";
-  import TransactionLog from "./lib/TransactionLog.svelte";
-  import TransferForm from "./lib/TransferForm.svelte";
+  import connect from "./starknet-stores/connectStore";
+  import accountStore from "./starknet-stores/accountStore";
   import UserGreeting from "./lib/UserGreeting.svelte";
-  import connectStore from "./stores/connectStore";
-  import walletStore from "./stores/walletStore";
+  import MintForm from "./lib/MintForm.svelte";
+  import ConnectWallet from "./lib/ConnectWallet.svelte";
+  import TransferForm from "./lib/TransferForm.svelte";
+  import type { Abi } from "starknet";
+  import contractStore from "./starknet-stores/contract";
+  import ERC20 from "./data/ERC20.json";
+  import SignMessage from "./lib/SignMessage.svelte";
+  import TokenInfo from "./lib/TokenInfo.svelte";
+
+  contractStore("testERC20", {
+    contractAddress: import.meta.env.VITE_CONTRACT_ADDRESS,
+    abi: ERC20 as Abi,
+    providerOrAccount: $accountStore.account,
+  });
 </script>
 
-<main class="flex flex-col h-full py-10 px-20 bg-gray-800 text-gray-100">
-  <div class="flex-1">
-    {#if $connectStore.connected}
+<div class="flex flex-col min-h-full py-10 px-20 bg-gray-800 text-gray-100">
+  {#if $connect.success}
+    <main class="flex-1">
       <UserGreeting />
+      <TokenInfo />
       <MintForm />
       <TransferForm />
-      <TransactionLog />
-      <TokenInfo />
-    {:else}
-      <ConnectWallet />
-    {/if}
-  </div>
-  <div>
+      <SignMessage />
+    </main>
+  {:else}
+    <ConnectWallet />
+  {/if}
+  <footer class="mt-10">
     <p>starknet + vite + svelte</p>
-  </div>
-</main>
+  </footer>
+</div>
 
 <style lang="postcss" global>
   @tailwind base;

@@ -1,15 +1,27 @@
 <script lang="ts">
-  import walletStore from "../stores/walletStore";
+  import accountStore from "src/starknet-stores/accountStore";
+  import truncateAddress from "src/utils/truncateAddress";
+
+  let address = import.meta.env.VITE_CONTRACT_ADDRESS;
+  let tokenStatus = "";
+
+  async function addTokenToWallet() {
+    tokenStatus = "loading...";
+
+    let added = await accountStore.watchToken(address);
+
+    tokenStatus = added
+      ? "Done!"
+      : "Something went wrong. You might already have this token";
+  }
 </script>
 
-<div class="mt-20 text-blue-400">
-  <p>ERC-20 token address:</p>
-  <a
-    href={`https://goerli.voyager.online/contract/${$walletStore.contractAddress}`}
-    target="_blank"
-    ><pre>{$walletStore.contractAddress.substring(0, 20)}...</pre></a
-  >
-  <button on:click={walletStore.watchToken} class="underline mt-1"
-    >Add this to your wallet</button
-  >
+<div class="mt-10 mb-10 text-blue-400">
+  <a href={`https://goerli.voyager.online/contract/${address}`} target="_blank">
+    ERC-20 token address: {truncateAddress(address)}
+  </a>
+  <button on:click={addTokenToWallet} class="underline mt-1 block">
+    Add this to your wallet
+  </button>
+  <p class="test-sm">{tokenStatus}</p>
 </div>
