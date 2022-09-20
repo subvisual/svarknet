@@ -10,7 +10,7 @@
       <p>Connecting wallet...</p>
     {:else if !$connectStore.connected}
       <button
-        type="buton"
+        type="button"
         on:click={() => connectStore.connect()}
         class="bg-blue-500 text-gray-100 py-3 px-6 rounded"
       >
