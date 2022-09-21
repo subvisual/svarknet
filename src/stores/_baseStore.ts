@@ -8,7 +8,7 @@ export interface BaseStoreProps<T> extends Writable<T> {
 export default function _baseStore<T, I>(
   store: Writable<T>,
   storeFn: (args: BaseStoreProps<T>) => I
-) {
+): I {
   function _set(args: Partial<T>) {
     store.update((store) => ({
       ...store,

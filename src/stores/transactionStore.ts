@@ -1,5 +1,11 @@
 import type { Result } from "starknet";
-import { get, writable } from "svelte/store";
+import {
+  get,
+  Subscriber,
+  Unsubscriber,
+  Writable,
+  writable,
+} from "svelte/store";
 import starknetStore from "./starknetStore";
 import _baseStore from "./_baseStore";
 
@@ -7,17 +13,20 @@ type TransactionStore = {
   isLoading: boolean;
   isSuccess: boolean;
   isError: boolean;
-  data: Result;
   hash: string;
 };
 
-export default function transactionStore() {
+export type TransactionActions = {
+  wait: (fn: () => Promise<any>) => void;
+  subscribe: (run: Subscriber<TransactionStore>) => Unsubscriber;
+};
+
+export default function transactionStore(): TransactionActions {
   const store = writable<TransactionStore>({
     isLoading: false,
     isSuccess: false,
     isError: false,
     hash: "",
-    data: null as Result,
   });
 
   return _baseStore(store, ({ subscribe, _set }) => {
@@ -49,8 +58,6 @@ export default function transactionStore() {
       }, 5000);
     }
 
-    const all = get(store);
-    console.log({ ...all });
     return {
       subscribe,
       wait,

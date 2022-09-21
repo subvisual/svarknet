@@ -4,6 +4,7 @@
   import account from "../stores/accountStore";
   import walletStore from "../stores/_walletStore";
   import { parseInputAmountToUint256 } from "../utils/parseInputAmountToUint256";
+  import TransactionStatus from "./TransactionStatus.svelte";
 
   let destinationAddress = "";
   let amount = 1;
@@ -52,3 +53,4 @@
     class="mt-4 bg-blue-500 text-gray-100 py-1 px-4 rounded-sm">Transfer</button
   >
 </form>
+<TransactionStatus {transaction} />
