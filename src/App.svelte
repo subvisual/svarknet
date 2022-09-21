@@ -1,19 +1,18 @@
 <script lang="ts">
-  import connect from "./stores/connect";
-  import account from "./stores/account";
+  import connect from "./stores/connectStore";
+  import accountStore from "./stores/accountStore";
   import UserGreeting from "./lib/UserGreeting.svelte";
   import MintForm from "./lib/MintForm.svelte";
   import ConnectWallet from "./lib/ConnectWallet.svelte";
   import TransferForm from "./lib/TransferForm.svelte";
   import type { Abi } from "starknet";
-  import contractStore from "./stores/contract";
+  import contractStore from "./stores/contractStore";
   import ERC20 from "./data/ERC20.json";
 
-  contractStore({
+  contractStore("testERC20", {
     contractAddress: import.meta.env.VITE_CONTRACT_ADDRESS,
     abi: ERC20 as Abi,
-    providerOrAccount: $account.account,
-    name: "erc20",
+    providerOrAccount: $accountStore.account,
   });
 </script>
 

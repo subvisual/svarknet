@@ -1,7 +1,6 @@
-import type { Contract, Transaction } from "ethers";
 import type { Result } from "starknet";
 import { get, writable } from "svelte/store";
-import starknetStore from "./starknet";
+import starknetStore from "./starknetStore";
 import _baseStore from "./_baseStore";
 
 type TransactionStore = {
@@ -12,7 +11,7 @@ type TransactionStore = {
   hash: string;
 };
 
-export default function transaction() {
+export default function transactionStore() {
   const store = writable<TransactionStore>({
     isLoading: false,
     isSuccess: false,
@@ -50,6 +49,8 @@ export default function transaction() {
       }, 5000);
     }
 
+    const all = get(store);
+    console.log({ ...all });
     return {
       subscribe,
       wait,

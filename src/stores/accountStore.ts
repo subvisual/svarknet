@@ -1,6 +1,6 @@
 import type { Account, AccountInterface } from "starknet";
 import { writable } from "svelte/store";
-import starknetStore from "./starknet";
+import starknetStore from "./starknetStore";
 import _baseStore from "./_baseStore";
 
 type AccountStore = {
@@ -15,7 +15,7 @@ const store = writable<AccountStore>({
   connected: false,
 });
 
-const account = _baseStore(store, ({ update, subscribe, _set }) => {
+const accountStore = _baseStore(store, ({ update, subscribe, _set }) => {
   starknetStore.subscribe((store) => {
     if (!store) return;
 
@@ -34,4 +34,4 @@ const account = _baseStore(store, ({ update, subscribe, _set }) => {
   };
 });
 
-export default account;
+export default accountStore;

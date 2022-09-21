@@ -1,5 +1,5 @@
 <script lang="ts">
-  import walletStore from "../stores/walletStore";
+  import walletStore from "../stores/_walletStore";
 </script>
 
 <div class="mt-20 text-blue-400">

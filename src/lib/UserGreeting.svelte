@@ -1,7 +1,7 @@
 <script lang="ts">
-  import account from "../stores/account";
+  import accountStore from "../stores/accountStore";
 
-  $: address = $account.address.substring(0, 10);
+  $: address = $accountStore.address.substring(0, 10);
 </script>
 
 <div class="my-10">

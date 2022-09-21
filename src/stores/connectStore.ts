@@ -1,67 +1,55 @@
-import { getStarknet } from "@argent/get-starknet/dist";
 import { writable } from "svelte/store";
-import walletStore from "./walletStore";
+import { connect as starknetConnect } from "get-starknet";
+import starknetStore from "./starknetStore";
+import _baseStore from "./_baseStore";
 
-function createConnectStore() {
-  const { update, subscribe } = writable({
-    loading: true,
-    connected: false,
-    noExtension: false,
-  });
+type ConnectStore = {
+  loading: boolean;
+  success: boolean;
+  idle: boolean;
+  error: boolean;
+};
 
-  const starknet = getStarknet();
+const store = writable<ConnectStore>({
+  loading: false,
+  success: false,
+  idle: true,
+  error: false,
+});
 
-  function setLoading(loading: boolean) {
-    update((store) => ({ ...store, loading }));
-  }
-
-  async function connect(showModal = true) {
-    setLoading(true);
-
-    const [userWalletContractAddress] = await starknet.enable({
-      showModal,
+const connectStore = _baseStore(store, ({ subscribe, _set }) => {
+  async function connectWallet() {
+    _set({
+      loading: true,
+      idle: true,
     });
 
-    if (starknet.isConnected) {
-      walletStore.initialiseWallet(userWalletContractAddress);
-      update((store) => ({ ...store, connected: true }));
-
-      starknet.on("accountsChanged", handleAccountChange);
-    }
-
-    setLoading(false);
-  }
-
-  function handleAccountChange() {
-    window.location.reload();
-  }
-
-  async function init() {
     try {
-      let preAuth = await starknet.isPreauthorized();
+      const starknet = await starknetConnect();
 
-      if (preAuth) {
-        connect(false);
-      } else {
-        setLoading(false);
+      const [address] = await starknet.enable({
+        showModal: true,
+      });
+
+      starknetStore.set(starknet);
+
+      if (address) {
+        _set({ success: true });
       }
-    } catch (err) {
-      console.error(err);
-      update((store) => ({ ...store, noExtension: true }));
-
-      setLoading(false);
+    } catch {
+      _set({ error: true });
+    } finally {
+      _set({
+        loading: false,
+        idle: true,
+      });
     }
   }
 
   return {
     subscribe,
-    connect,
-    init,
+    connectWallet,
   };
-}
-
-const connectStore = createConnectStore();
-
-connectStore.init();
+});
 
 export default connectStore;

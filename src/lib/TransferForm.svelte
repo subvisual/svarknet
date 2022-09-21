@@ -1,24 +1,23 @@
 <script lang="ts">
-  import { get } from "svelte/store";
-  import { contracts } from "../stores/contract";
-  import transaction from "../stores/transaction";
-  import account from "../stores/account";
-  import walletStore from "../stores/walletStore";
+  import contractsStore from "../stores/contractsStore";
+  import transactionStore from "../stores/transactionStore";
+  import account from "../stores/accountStore";
+  import walletStore from "../stores/_walletStore";
   import { parseInputAmountToUint256 } from "../utils/parseInputAmountToUint256";
 
   let destinationAddress = "";
   let amount = 1;
 
-  const erc20Contract = $contracts?.["erc20"];
+  const erc20Contract = $contractsStore.testERC20;
 
-  const transfer = transaction();
+  const transaction = transactionStore();
 
   function handleSubmit(event: SubmitEvent) {
     event.preventDefault();
-    
-    transfer.wait(() =>
-      $erc20Contract.mint(
-        $account.address,
+
+    transaction.wait(() =>
+      $erc20Contract.transfer(
+        destinationAddress,
         parseInputAmountToUint256(amount.toString())
       )
     );

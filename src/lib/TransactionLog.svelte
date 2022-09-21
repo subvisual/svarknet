@@ -1,5 +1,5 @@
 <script>
-  import walletStore from "../stores/walletStore";
+  import walletStore from "../stores/_walletStore";
 
   $:list = $walletStore.transactions.filter(
     (item) => item.status === "pending"

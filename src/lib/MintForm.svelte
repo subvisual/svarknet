@@ -1,22 +1,21 @@
 <script lang="ts">
-  import account from "../stores/account";
-  import transaction from "../stores/transaction";
-  import { contracts } from "../stores/contract";
+  import account from "../stores/accountStore";
+  import transactionStore from "../stores/transactionStore";
+  import contractsStore from "../stores/contractsStore";
   import { parseInputAmountToUint256 } from "../utils/parseInputAmountToUint256";
 
   let amount = 1;
 
-  const mintTx = transaction();
-  /* let contract = erc20Contract; */
+  const transaction = transactionStore();
 
-  const erc20Contract = $contracts?.["erc20"];
+  const erc20Contract = $contractsStore.testERC20;
 
   async function handleSubmit(event: SubmitEvent) {
     event.preventDefault();
 
-    console.log($erc20Contract)
+    console.log($erc20Contract);
 
-    mintTx.wait(() =>
+    transaction.wait(() =>
       $erc20Contract.mint(
         $account.address,
         parseInputAmountToUint256(amount.toString())
@@ -39,11 +38,11 @@
     type="submit"
     class="mt-4 bg-blue-500 text-gray-100 py-1 px-4 rounded-sm">Mint</button
   >
-  {#if $mintTx.isLoading}
+  {#if $transaction.isLoading}
     loading...
-  {:else if $mintTx.isSuccess}
+  {:else if $transaction.isSuccess}
     Done!
-  {:else if $mintTx.isError}
+  {:else if $transaction.isError}
     Something went wrong
   {/if}
 </form>
