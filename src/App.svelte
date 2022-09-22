@@ -25,15 +25,6 @@
     {:else}
       <ConnectWallet />
     {/if}
-
-    <!-- {#if $connectStore.connected}
-      <UserGreeting />
-      <TransferForm />
-      <TransactionLog />
-      <TokenInfo />
-    {:else}
-      <ConnectWallet />
-    {/if} -->
   </div>
   <div>
     <p>starknet + vite + svelte</p>

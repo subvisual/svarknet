@@ -1,5 +1,5 @@
 <script>
-  import connectStore from "../stores/connectStore";
+  import connectStore from "src/stores/connectStore";
 </script>
 
 <div class="flex h-full text-center">

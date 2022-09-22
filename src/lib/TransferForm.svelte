@@ -1,27 +1,27 @@
 <script lang="ts">
-  import contractsStore from "../stores/contractsStore";
-  import transactionStore from "../stores/transactionStore";
-  import account from "../stores/accountStore";
-  import walletStore from "../stores/_walletStore";
-  import { parseInputAmountToUint256 } from "../utils/parseInputAmountToUint256";
+  import contractsStore from "src/stores/contractsStore";
+  import transactionStore from "src/stores/transactionStore";
+  import { parseInputAmountToUint256 } from "src/utils/parseInputAmountToUint256";
   import TransactionStatus from "./TransactionStatus.svelte";
+  import balancesStore from "src/stores/balancesStore"; 
 
   let destinationAddress = "";
   let amount = 1;
 
-  const erc20Contract = $contractsStore.testERC20;
+  const tx = transactionStore();
+  const contract = $contractsStore.testERC20;
 
-  const transaction = transactionStore();
-
-  function handleSubmit(event: SubmitEvent) {
+  async function handleSubmit(event: SubmitEvent) {
     event.preventDefault();
 
-    transaction.wait(() =>
-      $erc20Contract.transfer(
+    await tx.waitFor(() =>
+      $contract.transfer(
         destinationAddress,
         parseInputAmountToUint256(amount.toString())
       )
     );
+
+    $balancesStore.testERC20.getBalance();
   }
 </script>
 
@@ -43,7 +43,6 @@
       type="number"
       required
       min="1"
-      max={$walletStore.balance}
       bind:value={amount}
       class="block py-1 px-2 mr-3 rounded-sm w-20 text-gray-900"
     />
@@ -52,5 +51,6 @@
     type="submit"
     class="mt-4 bg-blue-500 text-gray-100 py-1 px-4 rounded-sm">Transfer</button
   >
+
+  <TransactionStatus transaction={tx} />
 </form>
-<TransactionStatus {transaction} />

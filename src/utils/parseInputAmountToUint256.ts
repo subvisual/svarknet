@@ -1,5 +1,5 @@
 import { utils } from "ethers";
-import { Abi, Contract, number, uint256 } from "starknet";
+import { number, uint256 } from "starknet";
 
 function getUint256CalldataFromBN(bn: number.BigNumberish) {
   return { type: "struct" as const, ...uint256.bnToUint256(bn) };

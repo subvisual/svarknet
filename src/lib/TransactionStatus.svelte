@@ -1,14 +1,23 @@
 <script lang="ts">
-  import type { TransactionActions } from "src/stores/transactionStore";
+  import type { TransactionStore } from "src/stores/transactionStore";
 
-
-    export let transaction: TransactionActions;
+  export let transaction: TransactionStore;
 </script>
 
 <div>
-    <p>Transaction status:</p>
+  {#if $transaction.pending}
+    <p>Pending...</p>
+  {/if}
 
-    {#if $transaction.isSuccess}
-        <p>Success!</p>
-    {/if}
+  {#if $transaction.error}
+    <p>Something went wrong!</p>
+  {/if}
+
+  {#if $transaction.success}
+    <p>Success!</p>
+  {/if}
+
+  {#if $transaction.hash && !$transaction.idle}
+    {$transaction.hash}
+  {/if}
 </div>

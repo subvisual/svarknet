@@ -1,66 +1,53 @@
-import type { Result } from "starknet";
-import {
-  get,
-  Subscriber,
-  Unsubscriber,
-  Writable,
-  writable,
-} from "svelte/store";
+import { get, Subscriber, Unsubscriber, writable } from "svelte/store";
 import starknetStore from "./starknetStore";
 import _baseStore from "./_baseStore";
 
-type TransactionStore = {
-  isLoading: boolean;
-  isSuccess: boolean;
-  isError: boolean;
+type TransactionWritableStore = {
+  pending: boolean;
+  success: boolean;
+  error: boolean;
+  idle: boolean;
   hash: string;
 };
 
-export type TransactionActions = {
-  wait: (fn: () => Promise<any>) => void;
-  subscribe: (run: Subscriber<TransactionStore>) => Unsubscriber;
+export type TransactionStore = {
+  waitFor: (fn: () => Promise<any>) => Promise<void>;
+  subscribe: (run: Subscriber<TransactionWritableStore>) => Unsubscriber;
 };
 
-export default function transactionStore(): TransactionActions {
-  const store = writable<TransactionStore>({
-    isLoading: false,
-    isSuccess: false,
-    isError: false,
+export default function transactionStore(): TransactionStore {
+  const store = writable<TransactionWritableStore>({
+    pending: false,
+    success: false,
+    error: false,
+    idle: true,
     hash: "",
   });
 
   return _baseStore(store, ({ subscribe, _set }) => {
-    async function wait(fn: () => Promise<any>) {
-      _set({ isError: false, isLoading: true });
+    async function waitFor(fn: () => Promise<any>) {
+      _set({ idle: false, error: false, pending: true });
 
       try {
         let tx = await fn();
 
-        _set({ hash: tx.hash });
+        tx.transaction_hash && _set({ hash: tx.transaction_hash });
 
         await get(starknetStore).provider.waitForTransaction(
           tx.transaction_hash
         );
 
-        _set({ isSuccess: true });
+        _set({ success: true });
       } catch (err) {
-        _set({ isError: true });
+        _set({ error: true });
       } finally {
-        _set({ isLoading: false });
+        _set({ pending: false, idle: true });
       }
-    }
-
-    async function test() {
-      _set({ isLoading: true });
-
-      setTimeout(() => {
-        _set({ isLoading: false, isSuccess: true });
-      }, 5000);
     }
 
     return {
       subscribe,
-      wait,
+      waitFor,
     };
   });
 }
