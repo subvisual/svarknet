@@ -1,14 +1,14 @@
 <script lang="ts">
   import contractsStore from "src/starknet-stores/contractsStore";
-  import transactionStore from "src/starknet-stores/transactionStore";
+  import transactionHandler from "src/starknet-stores/transactionHandler";
   import { parseInputAmountToUint256 } from "src/utils/parseInputAmountToUint256";
   import TransactionStatus from "./TransactionStatus.svelte";
-  import balancesStore from "src/starknet-stores/balancesStore"; 
+  import balancesStore from "src/starknet-stores/balancesStore";
 
   let destinationAddress = "";
   let amount = 1;
 
-  const tx = transactionStore();
+  const tx = transactionHandler();
   const contract = $contractsStore.testERC20;
 
   async function handleSubmit(event: SubmitEvent) {

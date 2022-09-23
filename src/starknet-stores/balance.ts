@@ -24,15 +24,17 @@ export type BalanceStore = {
 // Creates a store function and adds it to the balances store, so the value
 // and current status can be acccessed anywhere in the app by it's name
 
-export default function balance({
-  address,
-  contract: receivedContract,
-  name,
-}: {
+type ContractProps = {
   address?: string;
   contract?: ContractStore;
-  name?: string;
-}): BalanceStore {
+};
+
+export default function balance(
+  name: string,
+  props: ContractProps
+): BalanceStore {
+  const { address, contract: receivedContract } = props;
+
   const store = writable({
     loading: false,
     success: false,

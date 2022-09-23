@@ -6,9 +6,8 @@
 
   $: address = truncateAddress($accountStore.address);
 
-  let bal = balance({
+  let bal = balance("testERC20", {
     contract: $contractsStore.testERC20,
-    name: "testERC20",
   });
 </script>
 

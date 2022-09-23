@@ -18,7 +18,7 @@ export type TransactionStore = {
   subscribe: (run: Subscriber<TransactionWritableStore>) => Unsubscriber;
 };
 
-export default function transactionStore(): TransactionStore {
+export default function transactionHandler(): TransactionStore {
   const store = writable<TransactionWritableStore>({
     pending: false,
     success: false,

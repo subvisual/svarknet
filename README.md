@@ -1,54 +1,102 @@
-# Starknet starter dapp
+# Svarknet
+
+A Starknet starter dapp built with Svelte and Vite
 
 Deployed at [svarknet.vercel.app](https://svarknet.vercel.app/).
-Uses [this ERC20 contract](https://goerli.voyager.online/contract/0x07394cbe418daa16e42b87ba67372d4ab4a5df0b05c6e554d158458ce245bc10).
+It uses [this ERC20 contract](https://goerli.voyager.online/contract/0x07394cbe418daa16e42b87ba67372d4ab4a5df0b05c6e554d158458ce245bc10).
 
+## Getting started
 
-# Svelte + TS + Vite
+Just run `yarn` to install dependencies, and `yarn dev` to run the app, on `http://localhost:5173`.
 
-This template should help get you started developing with Svelte and TypeScript in Vite.
+## Using stores
 
-## Recommended IDE Setup
+This starter contains several stores that help you interact with Starknet.
 
-[VSCode](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+An example is the `connectStore`:
 
-## Need an official Svelte framework?
+```svelte
+{#if $connectStore.idle}
+  <button
+    type="button"
+    on:click={() => connectStore.connectWallet()}
+  >
+    Connect wallet
+  </button>
+{:else if $connectStore.loading}
+  <p>Connecting wallet...</p>
+{/if}
+```
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+You can also create a contract instance store, and provide a name. The instance will be kept in a store, and can be accessed from anywhere in the app.
 
-## Technical considerations
+```svelte
+// App.svelte
+<script lang="ts">
+  contractStore("testERC20", {
+      contractAddress: CONTRACT_ADDRESS,
+      abi: ERC20,
+      providerOrAccount: $accountStore.account,
+  });
+</script>
 
-**Why use this over SvelteKit?**
+//MintForm.svelte
+<script lang="ts">
+  const contract = $contractsStore.testERC20;
 
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
-  `vite dev` and `vite build` wouldn't work in a SvelteKit environment, for example.
+  $contract.mint($account.address, 1)
+</script>
+```
 
-This template contains as little as possible to get started with Vite + TypeScript + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
+In the same way, you can track the balance of a given token. It will also get added to a store, so you can interact with it elsewhere.
 
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
+```svelte
+// Component A
+<script lang="ts">
+  let bal = balance({
+    contract: $contractsStore.testERC20,
+    name: "testERC20",
+  });
+</script>
 
-**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
+<div>
+  {#if $bal.loading}
+    <p>Loading balance...</p>
+  {/if}
+  {#if $bal.success}
+    ERC20 Balance: {$bal.balance}
+  {/if}
+</div>
 
-Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash references keeps the default TypeScript setting of accepting type information from the entire workspace, while also adding `svelte` and `vite/client` type information.
+// Component B
+<script lang="ts">
+  function refreshBalance() {
+    $balancesStore.testERC20.getBalance();
+  }
+</script>
+```
 
-**Why include `.vscode/extensions.json`?**
+You can use the `transactionHandler` to track the status of a transaction. It creates a store with reactive values for `pending`, `success`, etc.
 
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
+```svelte
+<script lang="ts">
+  const tx = transactionHandler();
+  const contract = $contractsStore.testERC20;
 
-**Why enable `allowJs` in the TS template?**
+  async function mint() {
+    await tx.waitFor(() =>
+      $contract.mint($account.address, 1)
+    );
+  }
+</script>
 
-While `allowJs: false` would indeed prevent the use of `.js` files in the project, it does not prevent the use of JavaScript syntax in `.svelte` files. In addition, it would force `checkJs: false`, bringing the worst of both worlds: not being able to guarantee the entire codebase is TypeScript, and also having worse typechecking for the existing JavaScript. In addition, there are valid use cases in which a mixed codebase may be relevant.
-
-**Why is HMR not preserving my local component state?**
-
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/rixo/svelte-hmr#svelte-hmr).
-
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
-
-```ts
-// store.ts
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
+<div>
+  {#if $tx.pending}
+    <p>Pending...</p>
+  {:else if $tx.error}
+    <p>Something went wrong!</p>
+  {:else if $tx.success}
+    <p>Success!</p>
+  {/if}
+</div>
 ```
