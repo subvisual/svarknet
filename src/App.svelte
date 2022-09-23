@@ -1,12 +1,12 @@
 <script lang="ts">
-  import connect from "./stores/connectStore";
-  import accountStore from "./stores/accountStore";
+  import connect from "./starknet-stores/connectStore";
+  import accountStore from "./starknet-stores/accountStore";
   import UserGreeting from "./lib/UserGreeting.svelte";
   import MintForm from "./lib/MintForm.svelte";
   import ConnectWallet from "./lib/ConnectWallet.svelte";
   import TransferForm from "./lib/TransferForm.svelte";
   import type { Abi } from "starknet";
-  import contractStore from "./stores/contractStore";
+  import contractStore from "./starknet-stores/contract";
   import ERC20 from "./data/ERC20.json";
   import SignMessage from "./lib/SignMessage.svelte";
   import TokenInfo from "./lib/TokenInfo.svelte";

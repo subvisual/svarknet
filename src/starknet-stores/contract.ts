@@ -3,7 +3,8 @@ import { Writable, writable } from "svelte/store";
 import contractsStore from "./contractsStore";
 import _baseStore from "./_baseStore";
 
-export type ContractWritableStore = Contract;
+// Contract instance store. Adds the instance to the balances store, allowing the
+// contract to be accessed and methods called from anywhere in the app
 
 export type ContractStore = Writable<Contract>;
 
@@ -13,11 +14,11 @@ type ContractProps = {
   providerOrAccount: ProviderInterface | AccountInterface;
 };
 
-export default function contractStore(
+export default function contract(
   name: string,
   config: ContractProps
 ): ContractStore {
-  const store = writable<ContractWritableStore>(
+  const store = writable<Contract>(
     new Contract(config.abi, config.contractAddress, config.providerOrAccount)
   );
 

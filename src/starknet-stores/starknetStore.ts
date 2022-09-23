@@ -4,6 +4,8 @@ import { connect } from "get-starknet";
 import { get, writable } from "svelte/store";
 import _baseStore from "./_baseStore";
 
+// Store for the starknet object. Handles account change updates.
+
 const store = writable<IStarknetWindowObject>();
 
 const starknetStore = _baseStore(

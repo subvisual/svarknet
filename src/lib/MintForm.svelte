@@ -1,10 +1,10 @@
 <script lang="ts">
-  import account from "src/stores/accountStore";
-  import transactionStore from "src/stores/transactionStore";
-  import contractsStore from "src/stores/contractsStore";
+  import account from "src/starknet-stores/accountStore";
+  import transactionStore from "src/starknet-stores/transactionStore";
+  import contractsStore from "src/starknet-stores/contractsStore";
   import { parseInputAmountToUint256 } from "src/utils/parseInputAmountToUint256";
   import TransactionStatus from "./TransactionStatus.svelte";
-  import balancesStore from "src/stores/balancesStore";
+  import balancesStore from "src/starknet-stores/balancesStore";
 
   let amount = 1;
 

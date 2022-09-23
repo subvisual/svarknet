@@ -1,5 +1,5 @@
 <script lang="ts">
-  import accountStore from "src/stores/accountStore";
+  import accountStore from "src/starknet-stores/accountStore";
   import type { TypedData } from "starknet/dist/utils/typedData";
 
   let message = "";

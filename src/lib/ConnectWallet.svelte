@@ -1,5 +1,5 @@
 <script>
-  import connectStore from "src/stores/connectStore";
+  import connectStore from "src/starknet-stores/connectStore";
 </script>
 
 <div class="flex flex-1 items-center min-h-full text-center">

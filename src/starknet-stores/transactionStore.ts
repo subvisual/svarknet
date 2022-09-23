@@ -2,6 +2,9 @@ import { get, Subscriber, Unsubscriber, writable } from "svelte/store";
 import starknetStore from "./starknetStore";
 import _baseStore from "./_baseStore";
 
+// Store function for handleing transaction state.
+// Receives a transaction to execute, and tracks it's status
+
 type TransactionWritableStore = {
   pending: boolean;
   success: boolean;

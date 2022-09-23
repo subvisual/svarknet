@@ -1,12 +1,12 @@
 <script lang="ts">
-  import accountStore from "src/stores/accountStore";
-  import balanceStore from "src/stores/balanceStore";
-  import contractsStore from "src/stores/contractsStore";
+  import accountStore from "src/starknet-stores/accountStore";
+  import balance from "src/starknet-stores/balance";
+  import contractsStore from "src/starknet-stores/contractsStore";
   import truncateAddress from "src/utils/truncateAddress";
 
   $: address = truncateAddress($accountStore.address);
 
-  let balance = balanceStore({
+  let bal = balance({
     contract: $contractsStore.testERC20,
     name: "testERC20",
   });
@@ -15,10 +15,10 @@
 <div class="my-10">
   <h1 class="text-3xl">Hello there, {address}</h1>
 
-  {#if $balance.loading}
+  {#if $bal.loading}
     <p>Loading balance...</p>
   {/if}
-  {#if $balance.success}
-    ERC20 Balance: {$balance.balance}
+  {#if $bal.success}
+    ERC20 Balance: {$bal.balance}
   {/if}
 </div>

@@ -1,19 +1,11 @@
-import type { Abi, uint256 } from "starknet";
-import {
-  get,
-  Subscriber,
-  Unsubscriber,
-  Writable,
-  writable,
-} from "svelte/store";
-import contractStore, { ContractStore } from "./contractStore";
+import type { Abi } from "starknet";
+import { get, Subscriber, Unsubscriber, writable } from "svelte/store";
+import contract, { ContractStore } from "./contract";
 import _baseStore from "./_baseStore";
 import ERC20 from "src/data/ERC20.json";
 import accountStore from "./accountStore";
 import parseUint256 from "src/utils/parseUint256";
 import balancesStore from "./balancesStore";
-import { uint256ToBN } from "starknet/dist/utils/uint256";
-import { formatEther } from "ethers/lib/utils";
 
 type BalanceWritableStore = {
   loading: boolean;
@@ -28,9 +20,13 @@ export type BalanceStore = {
   subscribe: (run: Subscriber<BalanceWritableStore>) => Unsubscriber;
 };
 
-export default function balanceStore({
+// Balance store. Receives either a contract or a contract address and a name.
+// Creates a store function and adds it to the balances store, so the value
+// and current status can be acccessed anywhere in the app by it's name
+
+export default function balance({
   address,
-  contract,
+  contract: receivedContract,
   name,
 }: {
   address?: string;
@@ -47,15 +43,12 @@ export default function balanceStore({
 
   const storeActions = _baseStore(store, ({ subscribe, _set }) => {
     const _contract =
-      contract ||
-      contractStore("test", {
+      receivedContract ||
+      contract("test", {
         contractAddress: address,
         abi: ERC20 as Abi,
         providerOrAccount: get(accountStore).account,
       });
-
-    let a = _contract;
-    a;
 
     async function getBalance() {
       _set({

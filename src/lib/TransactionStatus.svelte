@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { TransactionStore } from "src/stores/transactionStore";
+  import type { TransactionStore } from "src/starknet-stores/transactionStore";
 
   export let transaction: TransactionStore;
 </script>

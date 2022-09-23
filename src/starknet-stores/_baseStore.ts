@@ -5,6 +5,9 @@ export interface BaseStoreProps<T> extends Writable<T> {
   _subscribeOnce: (fn: (data: T) => boolean) => void;
 }
 
+// Base store that receives a writable store and store wrapper function
+// It creates util functions and passes them to the wrapper function
+
 export default function _baseStore<T, I>(
   store: Writable<T>,
   storeFn: (args: BaseStoreProps<T>) => I

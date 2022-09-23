@@ -1,5 +1,4 @@
 import type { AccountInterface } from "starknet";
-import type { TypedData } from "starknet/dist/utils/typedData";
 import { get, writable } from "svelte/store";
 import starknetStore from "./starknetStore";
 import _baseStore from "./_baseStore";
@@ -52,16 +51,22 @@ const accountStore = _baseStore(store, ({ update, subscribe, _set }) => {
     });
   }
 
-  function watchToken(address: string) {
-    get(starknetStore).request({
-      type: "wallet_watchAsset",
-      params: {
-        type: "ERC20",
-        options: {
-          address,
+  async function watchToken(address: string) {
+    try {
+      return get(starknetStore).request({
+        type: "wallet_watchAsset",
+        params: {
+          type: "ERC20",
+          options: {
+            address,
+          },
         },
-      },
-    });
+      });
+    } catch (err) {
+      console.log(err);
+
+      return false;
+    }
   }
 
   return {

@@ -3,6 +3,8 @@ import { get, Writable, writable } from "svelte/store";
 import accountStore from "./accountStore";
 import _baseStore from "./_baseStore";
 
+// Store of all contract stores. Subscribes to account changes
+
 type ContractsStoreType = Record<string, Writable<Contract>>;
 
 export const store = writable<ContractsStoreType>({});
