@@ -28,7 +28,7 @@ const starknetStore = _baseStore(
       const newStarknet = getStarknet();
 
       if (newStarknet.account) {
-        console.log(`accountsChanged:`);
+        console.log(`accountsChanged: ${newStarknet.account?.address}`);
 
         set(newStarknet);
       } else {
