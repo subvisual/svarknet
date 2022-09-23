@@ -2,7 +2,7 @@
 
 A Starknet starter dapp built with Svelte and Vite
 
-Deployed at [svarknet.vercel.app](https://svarknet.vercel.app/).
+Deployed at [svarknet.netlify.app](https://svarknet.netlify.app/).
 It uses [this ERC20 contract](https://goerli.voyager.online/contract/0x07394cbe418daa16e42b87ba67372d4ab4a5df0b05c6e554d158458ce245bc10).
 
 ## Getting started
@@ -53,9 +53,8 @@ In the same way, you can track the balance of a given token. It will also get ad
 ```svelte
 // Component A
 <script lang="ts">
-  let bal = balance({
+  let bal = balance("testERC20", {
     contract: $contractsStore.testERC20,
-    name: "testERC20",
   });
 </script>
 
