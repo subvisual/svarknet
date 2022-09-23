@@ -1,8 +1,7 @@
-import type { IStarknetWindowObject } from "get-starknet";
+import { getStarknet, IStarknetWindowObject } from "get-starknet";
 import { constants } from "starknet";
-import { connect } from "get-starknet";
 import { get, writable } from "svelte/store";
-import { connect as starknetConnect } from "get-starknet";
+import { connect } from "get-starknet";
 import _baseStore from "./_baseStore";
 
 // Store for the starknet object. Handles account change updates.
@@ -25,12 +24,22 @@ const starknetStore = _baseStore(
       } catch {}
     }
 
-    async function handleAccountsChange(data) {
-      console.log(`accountsChanged: ${data}`);
+    async function handleAccountsChange() {
+      const newStarknet = getStarknet();
 
-      const st = await connect({ showList: false });
+      if (newStarknet.account) {
+        console.log(`accountsChanged:`);
 
-      set(st);
+        set(newStarknet);
+      } else {
+        const [address] = await newStarknet.enable({
+          showModal: false,
+          starknetVersion: "v4",
+        } as any);
+
+        console.log(`accountsChanged: ${address}`);
+        address && set(newStarknet);
+      }
     }
 
     _subscribeOnce((data) => {
