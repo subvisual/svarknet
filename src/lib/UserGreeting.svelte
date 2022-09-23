@@ -2,8 +2,9 @@
   import accountStore from "src/stores/accountStore";
   import balanceStore from "src/stores/balanceStore";
   import contractsStore from "src/stores/contractsStore";
+  import truncateAddress from "src/utils/truncateAddress";
 
-  $: address = $accountStore.address.substring(0, 10);
+  $: address = truncateAddress($accountStore.address);
 
   let balance = balanceStore({
     contract: $contractsStore.testERC20,

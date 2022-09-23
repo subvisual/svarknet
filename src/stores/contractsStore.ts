@@ -1,14 +1,14 @@
-import { get, writable } from "svelte/store";
+import type { Contract } from "starknet";
+import { get, Writable, writable } from "svelte/store";
 import accountStore from "./accountStore";
-import type { ContractStore } from "./contractStore";
 import _baseStore from "./_baseStore";
 
-type ContractsStoreType = Record<string, ContractStore>;
+type ContractsStoreType = Record<string, Writable<Contract>>;
 
 export const store = writable<ContractsStoreType>({});
 
 const contractsStore = _baseStore(store, ({ _set, subscribe }) => {
-  function addContract(name: string, contract: ContractStore) {
+  function addContract(name: string, contract: Writable<Contract>) {
     if (!get(store)[name]) {
       _set({
         [name]: contract,
@@ -25,10 +25,10 @@ const contractsStore = _baseStore(store, ({ _set, subscribe }) => {
 
 export default contractsStore;
 
-accountStore.subscribe((store) => {
+accountStore.subscribe(({ account }) => {
   Object.entries(get(contractsStore)).forEach(([_, contract]) => {
     contract.update((data) => {
-      data.providerOrAccount = store.account;
+      data.providerOrAccount = account;
 
       return data;
     });

@@ -54,3 +54,4 @@
 
   <TransactionStatus transaction={tx} />
 </form>
+<hr class="mb-4" />

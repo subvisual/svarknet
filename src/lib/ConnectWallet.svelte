@@ -2,7 +2,7 @@
   import connectStore from "src/stores/connectStore";
 </script>
 
-<div class="flex h-full text-center">
+<div class="flex flex-1 items-center min-h-full text-center">
   <div class="m-auto pb-20">
     {#if $connectStore.loading}
       <p>Connecting wallet...</p>

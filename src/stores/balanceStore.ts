@@ -1,4 +1,4 @@
-import type { Abi, Contract } from "starknet";
+import type { Abi, uint256 } from "starknet";
 import {
   get,
   Subscriber,
@@ -10,8 +10,10 @@ import contractStore, { ContractStore } from "./contractStore";
 import _baseStore from "./_baseStore";
 import ERC20 from "src/data/ERC20.json";
 import accountStore from "./accountStore";
-import parseBNResult from "src/utils/parseBNResult";
+import parseUint256 from "src/utils/parseUint256";
 import balancesStore from "./balancesStore";
+import { uint256ToBN } from "starknet/dist/utils/uint256";
+import { formatEther } from "ethers/lib/utils";
 
 type BalanceWritableStore = {
   loading: boolean;
@@ -63,13 +65,11 @@ export default function balanceStore({
       });
 
       try {
-        const bal = await get(_contract.store).balanceOf(
-          get(accountStore).address
-        );
+        const bal = await get(_contract).balanceOf(get(accountStore).address);
 
         _set({
           success: true,
-          balance: parseBNResult(bal.balance.low),
+          balance: parseUint256(bal.balance),
           data: bal,
         });
       } catch (err) {

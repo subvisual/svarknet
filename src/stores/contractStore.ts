@@ -1,15 +1,11 @@
 import { Abi, AccountInterface, Contract, ProviderInterface } from "starknet";
-import { Unsubscriber, Updater, Writable, writable } from "svelte/store";
+import { Writable, writable } from "svelte/store";
 import contractsStore from "./contractsStore";
 import _baseStore from "./_baseStore";
 
-type ContractWritableStore = Contract;
+export type ContractWritableStore = Contract;
 
-export type ContractStore = {
-  subscribe: (run: Updater<ContractWritableStore>) => Unsubscriber;
-  update: (updater: Updater<ContractWritableStore>) => void;
-  store: Writable<Contract>;
-};
+export type ContractStore = Writable<Contract>;
 
 type ContractProps = {
   contractAddress: string;
@@ -25,15 +21,7 @@ export default function contractStore(
     new Contract(config.abi, config.contractAddress, config.providerOrAccount)
   );
 
-  const storeActions = _baseStore(store, ({ subscribe, update }) => {
-    return {
-      subscribe,
-      update,
-      store,
-    };
-  });
+  contractsStore.addContract(name, store);
 
-  contractsStore.addContract(name, storeActions);
-
-  return storeActions;
+  return store;
 }
